@@ -1,3 +1,16 @@
+diff --git a/configure.ac b/configure.ac
+index 970c129..6ba65b9 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -55,7 +55,7 @@ LT_INIT
+ AC_SUBST(PYTHIALIBS)
+ PYTHIALIBS="-lpythia8"
+ LDFLAGS="-L$PYTHIA8/lib -Wl,-rpath,$PYTHIA8/lib"
+-CXXFLAGS="$CXXFLAGS -fPIC -I$PYTHIA8/include -I..  -DPREFIX=\\\"$prefix/share\\\""
++CXXFLAGS="$CXXFLAGS -fPIC -I$PYTHIA8/include -I..  -DPREFIX=\\\"$prefix/share\\\" -include Pythia8/Basics.h"
+ 
+ #AC_SUBST(FORTLIBS)
+ #AC_SUBST(WITH_PYTHIA8)
 diff --git a/jam2/JAM.cxx b/jam2/JAM.cxx
 index 1b2abdd..af48d54 100644
 --- a/jam2/JAM.cxx
@@ -13,4 +26,29 @@ index 1b2abdd..af48d54 100644
 +      << " current version of JAM uses pythia8 version >= 8.312"<< std::endl;
      exit(1);
    }
+ 
+diff --git a/jam2/initcond/Angantyr.cxx b/jam2/initcond/Angantyr.cxx
+index 8b3b3ac..8a27da7 100644
+--- a/jam2/initcond/Angantyr.cxx
++++ b/jam2/initcond/Angantyr.cxx
+@@ -127,7 +127,7 @@ void Angantyr::generate(Collision* event, int mode)
+   impactPar = hiinfo.b();
+   nCollG = hiinfo.nCollTot()+hiinfo.nCollND()
+     +hiinfo.nCollSDP()+hiinfo.nCollSDT()
+-    +hiinfo.nCollDD()+hiinfo.nCollCD()+hiinfo.nCollEl();
++    +hiinfo.nCollDD()+hiinfo.nCollCD()+hiinfo.nCollEL();
+ 
+   int nPartProj = hiinfo.nPartProj();
+   int nPartTarg = hiinfo.nPartTarg();
+diff --git a/jam2/initcond/Constraints.h b/jam2/initcond/Constraints.h
+index a7e6891..e0564e0 100644
+--- a/jam2/initcond/Constraints.h
++++ b/jam2/initcond/Constraints.h
+@@ -3,6 +3,7 @@
+ 
+ #include <vector>
+ #include <Pythia8/Settings.h>
++#include <Pythia8/Basics.h>
+ 
+ namespace jam2 {
  

@@ -15,7 +15,7 @@ elif [ -d "$HOME/lib/pythia8/include/Pythia8" ]; then
     PYTHIA_INSTALL_PATH="$HOME/lib/pythia8"
 else
     echo "Pythia 8 not found in system paths. Checking deps/..."
-    PYTHIA_INSTALL_PATH="$ROOT_DIR/deps/pythia8/install"
+    PYTHIA_INSTALL_PATH="$ROOT_DIR/deps/pythia8312/install"
     if [ ! -d "$PYTHIA_INSTALL_PATH/include/Pythia8" ]; then
         echo "Pythia 8 not found. Downloading and building Pythia 8.312..."
         mkdir -p deps
@@ -53,7 +53,17 @@ echo "Step 3: Building JAM2..."
 cd "$ROOT_DIR/jam2-code"
 # Clean previous build artifacts if any
 [ -f Makefile ] && make distclean || true
-./autogen
+
+# Download missing autoconf macros
+mkdir -p m4
+for macro in ax_cxx_compile_stdcxx.m4 ax_require_defined.m4 ax_split_version.m4; do
+    if [ ! -f "m4/$macro" ]; then
+        curl -L -s "https://raw.githubusercontent.com/autoconf-archive/autoconf-archive/master/m4/$macro" -o "m4/$macro"
+    fi
+done
+
+# Run autoreconf instead of ./autogen to properly pick up m4 files
+autoreconf -vif
 ./configure PYTHIA8="$PYTHIA_INSTALL_PATH" --prefix="$(pwd)/install"
 make -j$(nproc)
 make install
